@@ -19,14 +19,14 @@ public class SecretDraw {
 
     // Participants
     public static final ArrayList<String> participants = new ArrayList<>();
-    public  static int[] assignedFriendIndex = null;
+    public static int[] assignedFriendIndex = null;
 
     //Scanner
-    public  static final Scanner sc = new Scanner(System.in);
+    public static final Scanner sc = new Scanner(System.in);
 
     public static void main(String[] args) {
+        Random random = new Random();
         boolean exit = false;
-
         while(!exit){
             printMenu();
             String input = sc.nextLine();
@@ -64,7 +64,10 @@ public class SecretDraw {
                     listParticipants();
                     break;
                 case 4:
-                    System.out.println("Case 4");
+                    System.out.println("*****************************************************************************");
+                    System.out.println("* Draw completed successfully!. See the results in the Draw Summary option  *");
+                    System.out.println("*****************************************************************************\n");
+                    runDrawRaffle(random);
                     break;
                 case 5:
                     System.out.println("Case 5");
@@ -124,7 +127,10 @@ public class SecretDraw {
         eventDate = readDate("Enter Draw date (YYYY-MM-DD): ");
         drawState = STATE_CREATED;
         assignedFriendIndex = null;
-        System.out.println("Draw registered successfully.");
+        System.out.println("***********************************");
+        System.out.println("* Draw registered successfully!   *");
+        System.out.println("***********************************");
+        
     }
 
     public static String readText(String userText){
@@ -242,7 +248,9 @@ public class SecretDraw {
     
             participants.add(name);
         }
-        System.out.println("Participants registered successfully.");
+        System.out.println("*******************************************");
+        System.out.println("* Participants registered successfully!   *");
+        System.out.println("*******************************************");
     }
 
     public static boolean isDuplicateParticipant(String participantName) {
@@ -263,10 +271,65 @@ public class SecretDraw {
             System.out.println("No participants registered yet.");
             return;
         }
-        System.out.println("List of participants for the draw "+drawName+":");
+        System.out.println("List of participants for the draw "+drawName+":\n");
         for (int i = 0; i < participants.size(); i++) {
             System.out.println((i + 1) + ") " + participants.get(i));
         }
     }
+
+    public static void runDrawRaffle(Random random) {
+        if (!isDrawRegistered()) {
+            System.out.println("Error: you must create the draw before running it.");
+            return;
+        }
+    
+        if (participants.size() < 2) {
+            System.out.println("Error: at least 2 participants are required.");
+            return;
+        }
+    
+        if (drawState.equals(STATE_DRAWN)) {
+            System.out.println("The draw has already been done.");
+            return;
+        }
+    
+        assignedFriendIndex = generateAssignments(participants.size(), random);
+        drawState = STATE_DRAWN;
+    
+    }
+
+
+    public static int[] generateAssignments(int numberOfParticipants, Random random) {
+        int[] assignment = new int[numberOfParticipants];
+    
+        for (int participantIndex = 0; participantIndex < numberOfParticipants; participantIndex++) {
+            assignment[participantIndex] = participantIndex;
+        }
+    
+        do {
+            shuffleAssignments(assignment, random);
+        } while (hasSelfAssignments(assignment));
+    
+        return assignment;
+    }
+
+    public static boolean hasSelfAssignments(int[] assignedFriendIndexes) {
+        for (int participantIndex = 0; participantIndex < assignedFriendIndexes.length; participantIndex++) {
+            if (assignedFriendIndexes[participantIndex] == participantIndex) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static void shuffleAssignments(int[] assignedFriendIndexes, Random random) {
+        for (int currentIndex = assignedFriendIndexes.length - 1; currentIndex > 0; currentIndex--) {
+            int randomIndex = random.nextInt(currentIndex + 1);
+            int temporaryValue = assignedFriendIndexes[currentIndex];
+            assignedFriendIndexes[currentIndex] = assignedFriendIndexes[randomIndex];
+            assignedFriendIndexes[randomIndex] = temporaryValue;
+        }
+    }
+
 
 }
