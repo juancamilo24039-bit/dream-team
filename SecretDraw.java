@@ -64,13 +64,16 @@ public class SecretDraw {
                     listParticipants();
                     break;
                 case 4:
-                    System.out.println("*****************************************************************************");
-                    System.out.println("* Draw completed successfully!. See the results in the Draw Summary option  *");
-                    System.out.println("*****************************************************************************\n");
+                    System.out.println("\n-----------------------------------------------------------------------------");
+                    System.out.println(" Draw completed successfully!. See the results in the Draw Summary option (5) ");
+                    System.out.println("-------------------------------------------------------------------------------\n");
                     runDrawRaffle(random);
                     break;
                 case 5:
-                    System.out.println("Case 5");
+                    System.out.println("\n--------------------------");
+                    System.out.println("        DRAW SUMMARY ");
+                    System.out.println("¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯\n");
+                    drawSummary();
                     break;
                 case 0:
                     exit=true;
@@ -127,7 +130,7 @@ public class SecretDraw {
         eventDate = readDate("Enter Draw date (YYYY-MM-DD): ");
         drawState = STATE_CREATED;
         assignedFriendIndex = null;
-        System.out.println("***********************************");
+        System.out.println("\n***********************************");
         System.out.println("* Draw registered successfully!   *");
         System.out.println("***********************************");
         
@@ -248,7 +251,7 @@ public class SecretDraw {
     
             participants.add(name);
         }
-        System.out.println("*******************************************");
+        System.out.println("\n*******************************************");
         System.out.println("* Participants registered successfully!   *");
         System.out.println("*******************************************");
     }
@@ -331,5 +334,28 @@ public class SecretDraw {
         }
     }
 
+    public static void drawSummary() {
+        if (!isDrawRegistered()) {
+            System.out.println("ERROR: No raffle registered yet.");
+            return;
+        }
+  
+        System.out.println("Name: " + drawName);
+        System.out.println("Description: " + drawDescription);
+        System.out.println("Suggested budget: " + suggestedBudget);
+        System.out.println("Event date: " + eventDate);
+        System.out.println("State: " + drawState);
+
+        if (!STATE_DRAWN.equals(drawState)) {
+            System.out.println("WARNING!: The raffle has not been drawn yet.");
+            return;
+        }
+
+        System.out.println("\nAssignments (participant -> secret friend):");
+        for (int i = 0; i < participants.size(); i++) {
+            int friendIndex = assignedFriendIndex[i];
+            System.out.println(participants.get(i) + " -> " + participants.get(friendIndex));
+        }
+    }
 
 }
