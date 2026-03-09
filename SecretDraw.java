@@ -5,9 +5,9 @@ import java.util.*;
 public class SecretDraw {
 
     // States
-    private static final String STATE_NONE = "NONE";
-    private static final String STATE_CREATED = "CREATED";
-    private static final String STATE_DRAWN = "DRAWN";
+    public static final String STATE_NONE = "NONE";
+    public static final String STATE_CREATED = "CREATED";
+    public static final String STATE_DRAWN = "DRAWN";
 
     // Draw data
     public static String drawName = null;
@@ -18,11 +18,11 @@ public class SecretDraw {
 
 
     // Participants
-    private static final ArrayList<String> participants = new ArrayList<>();
-    private static int[] assignedFriendIndex = null;
+    public static final ArrayList<String> participants = new ArrayList<>();
+    public  static int[] assignedFriendIndex = null;
 
     //Scanner
-    private static final Scanner sc = new Scanner(System.in);
+    public  static final Scanner sc = new Scanner(System.in);
 
     public static void main(String[] args) {
         boolean exit = false;
@@ -52,10 +52,16 @@ public class SecretDraw {
                     createDraw();
                     break;
                 case 2:
-                    System.out.println("Case 2");
+                    System.out.println("--------------------------");
+                    System.out.println("   REGISTER PARTICIPANTS ");
+                    System.out.println("¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯");
+                    registerParticipants();
                     break;
                 case 3:
-                    System.out.println("Case 3");
+                    System.out.println("--------------------------");
+                    System.out.println("       PARTICIPANTS ");
+                    System.out.println("¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯");
+                    listParticipants();
                     break;
                 case 4:
                     System.out.println("Case 4");
@@ -145,7 +151,7 @@ public class SecretDraw {
         }
     }
 
-    private static double readDouble(String prompt) {
+    public static double readDouble(String prompt) {
         while (true) {
             System.out.print(prompt);
             String input = sc.nextLine();
@@ -163,7 +169,7 @@ public class SecretDraw {
         }
     }    
 
-    private static LocalDate readDate(String prompt) {
+    public static LocalDate readDate(String prompt) {
         while (true) {
             System.out.print(prompt);
             String input = sc.nextLine();
@@ -204,8 +210,63 @@ public class SecretDraw {
         drawState = STATE_NONE;
         participants.clear();
         assignedFriendIndex = null;
-    }    
+    }
 
+    public static void registerParticipants() {
+        if (!isDrawRegistered()) {
+            System.out.println("Error: you must create the draw first.");
+            return;
+        }
+    
+        if (drawState.equals(STATE_DRAWN)) {
+            System.out.println("Error: you cannot add participants after running the draw.");
+            return;
+        }
+    
+        int numberOfParticipants;
+        while (true) {
+            numberOfParticipants = readInt("How many participants do you want to register? ");
+            if (numberOfParticipants > 0) {
+                break;
+            }
+            System.out.println("Error: number must be greater than 0.");
+        }   
+        for (int i = 1; i <= numberOfParticipants; i++) {
+            String name = readText("Enter participant " + i + " name: ");
+    
+            if (isDuplicateParticipant(name)) {
+                System.out.println("Error: this participant already exists.");
+                i--;
+                continue;
+            }
+    
+            participants.add(name);
+        }
+        System.out.println("Participants registered successfully.");
+    }
 
+    public static boolean isDuplicateParticipant(String participantName) {
+        String normalizedInputName = participantName.trim().toLowerCase();
+    
+        for (int i = 0; i < participants.size(); i++) {
+            String normalizedParticipantName = participants.get(i).trim().toLowerCase();
+
+            if (normalizedParticipantName.equals(normalizedInputName)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static void listParticipants() {
+        if (participants.isEmpty()) {
+            System.out.println("No participants registered yet.");
+            return;
+        }
+        System.out.println("List of participants for the draw "+drawName+":");
+        for (int i = 0; i < participants.size(); i++) {
+            System.out.println((i + 1) + ") " + participants.get(i));
+        }
+    }
 
 }
